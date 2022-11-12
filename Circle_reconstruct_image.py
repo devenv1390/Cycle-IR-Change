@@ -1,6 +1,7 @@
 import tensorflow as tf
 import numpy as np
 from parameter_define import *
+from PIL import Image
 from scipy.misc import imread, imshow
 from image_resizing import ResizeImage
 import matplotlib.pyplot as plt
@@ -100,7 +101,7 @@ if __name__ == '__main__':
     featW = tf.Variable(initial_value=np.random.uniform(low=0.0, high=1.0, size=(B, np.int32(W / grid_size))),
                         dtype=tf.float32)
     input_size = tf.shape(images)
-    aspect_ratio = tf.constant([np.round(H / 1.0), W / 3])
+    aspect_ratio = tf.constant([np.round(H / 1.0), W * 0.75])
 
     # featH = tf.nn.sigmoid(featH)
     # featH = tf.clip_by_value(featH, 0, 1.0)
@@ -117,4 +118,6 @@ if __name__ == '__main__':
         print(x.shape)
         # imshow(x[0, ...])
         plt.imshow(x[0, ...].astype(np.uint8))
+        img = Image.fromarray(x[0, ...].astype(np.uint8))
+        img.save("result1.png")
         plt.show()
