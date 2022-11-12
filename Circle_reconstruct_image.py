@@ -1,5 +1,9 @@
+import re
+
 import tensorflow as tf
 import numpy as np
+import os
+from skimage import io
 from parameter_define import *
 from PIL import Image
 from scipy.misc import imread, imshow
@@ -11,7 +15,7 @@ import matplotlib.pyplot as plt
 #     shape = np.shape(Vec)[1]
 #     VecMax = np.tile(np.max(Vec, 1, keepdims=True), [1, shape])
 #     VecMin = np.tile(np.min(Vec, 1, keepdims=True), [1, shape])
-#     return (Vec-VecMin)/(VecMax-VecMin)
+#     return (Vec - VecMin) / (VecMax - VecMin)
 
 
 def preprocess(featH, featW, input_size):
@@ -88,36 +92,51 @@ def reconstruct_image(images, featH, featW, input_size, aspect_ratio):
 
 
 if __name__ == '__main__':
-    img = imread('./RetargetMeAll/image.png')
-    img = np.stack((img, img, img, img, img, img))
-    B, H, W, C = img.shape
-    print(H / grid_size)
-    print(W / grid_size)
-    print(img.shape)
+    width = 0.5
+    # path = 'I:\\SCHOOL\\opencv\\Cycle-IR-master\\RetargetMeAll\\0.75'
+    path = 'I:/SCHOOL/opencv/Cycle-IR-master/RetargetMeAll/0.5'
+    # all_files_path = []
+    # for root, dirs, files in os.walk(path, topdown=False):
+    #     if len(files) > 0:
+    #         each_folder_files = [os.path.join(root,files[0])]
+    #         all_files_path.extend(each_folder_files)
+    # for path2 in all_files_path:
+    for filename in os.listdir(path):
+        # path3 = re.sub('\\\\', '/', path)
+        # img = imread(path)
+        img = io.imread(path + '/' + filename)
+        # filename = os.listdir(path3)
+        print(filename)
+        # img = imread('./RetargetMeAll/image.png')
+        img = np.stack((img, img, img, img, img, img))
+        B, H, W, C = img.shape
+        print(H / grid_size)
+        print(W / grid_size)
+        print(img.shape)
 
-    images = tf.placeholder(tf.float32, shape=(B, H, W, C))
-    featH = tf.Variable(initial_value=np.random.uniform(low=0.0, high=1.0, size=(B, np.int32(H / grid_size))),
-                        dtype=tf.float32)
-    featW = tf.Variable(initial_value=np.random.uniform(low=0.0, high=1.0, size=(B, np.int32(W / grid_size))),
-                        dtype=tf.float32)
-    input_size = tf.shape(images)
-    aspect_ratio = tf.constant([np.round(H / 1.0), W * 0.75])
+        images = tf.placeholder(tf.float32, shape=(B, H, W, C))
+        featH = tf.Variable(initial_value=np.random.uniform(low=0.0, high=1.0, size=(B, np.int32(H / grid_size))),
+                            dtype=tf.float32)
+        featW = tf.Variable(initial_value=np.random.uniform(low=0.0, high=1.0, size=(B, np.int32(W / grid_size))),
+                            dtype=tf.float32)
+        input_size = tf.shape(images)
+        aspect_ratio = tf.constant([np.round(H / 1.0), W * width])
 
-    # featH = tf.nn.sigmoid(featH)
-    # featH = tf.clip_by_value(featH, 0, 1.0)
-    # featW = tf.nn.sigmoid(featW)
-    # featW = tf.clip_by_value(featW, 0, 1.0)
+        featH = tf.nn.sigmoid(featH)
+        featH = tf.clip_by_value(featH, 0, 1.0)
+        featW = tf.nn.sigmoid(featW)
+        featW = tf.clip_by_value(featW, 0, 1.0)
 
-    ta_final_result = reconstruct_image(images, featH, featW, input_size, aspect_ratio)
+        ta_final_result = reconstruct_image(images, featH, featW, input_size, aspect_ratio)
 
-    with tf.Session() as sess:
-        sess.run(tf.global_variables_initializer())
-        x = sess.run(ta_final_result, feed_dict={images: img})
+        with tf.Session() as sess:
+            sess.run(tf.global_variables_initializer())
+            x = sess.run(ta_final_result, feed_dict={images: img})
 
-        x = np.array(x)
-        print(x.shape)
-        # imshow(x[0, ...])
-        plt.imshow(x[0, ...].astype(np.uint8))
-        img = Image.fromarray(x[0, ...].astype(np.uint8))
-        img.save("result1.png")
-        plt.show()
+            x = np.array(x)
+            print(x.shape)
+            # imshow(x[0, ...])
+            # plt.imshow(x[0, ...].astype(np.uint8))
+            img = Image.fromarray(x[0, ...].astype(np.uint8))
+            img.save(filename + "_" + str(width) + ".png")
+            plt.show()
