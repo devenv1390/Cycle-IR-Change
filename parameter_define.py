@@ -2,6 +2,7 @@ import os
 
 
 TrainModel = False
+# TrainModel = True
 img_dataset = 'training_dataset/HKU-IS/imgs/'  # train set
 sal_dataset = 'training_dataset/HKU-IS/gt/'  # train set
 # train_dataset = 'training_dataset/images_jpg/'  # train set
