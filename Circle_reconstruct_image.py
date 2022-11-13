@@ -93,7 +93,6 @@ def reconstruct_image(images, featH, featW, input_size, aspect_ratio):
 
 if __name__ == '__main__':
     width = 0.5
-    # path = 'I:\\SCHOOL\\opencv\\Cycle-IR-master\\RetargetMeAll\\0.75'
     path = 'I:/SCHOOL/opencv/Cycle-IR-master/RetargetMeAll/0.5'
     # all_files_path = []
     # for root, dirs, files in os.walk(path, topdown=False):
@@ -102,10 +101,7 @@ if __name__ == '__main__':
     #         all_files_path.extend(each_folder_files)
     # for path2 in all_files_path:
     for filename in os.listdir(path):
-        # path3 = re.sub('\\\\', '/', path)
-        # img = imread(path)
         img = io.imread(path + '/' + filename)
-        # filename = os.listdir(path3)
         print(filename)
         # img = imread('./RetargetMeAll/image.png')
         img = np.stack((img, img, img, img, img, img))
