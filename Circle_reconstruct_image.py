@@ -1,12 +1,8 @@
-import re
-
 import tensorflow as tf
 import numpy as np
-import os
 from skimage import io
 from parameter_define import *
 from PIL import Image
-from scipy.misc import imread, imshow
 from image_resizing import ResizeImage
 import matplotlib.pyplot as plt
 
@@ -93,17 +89,13 @@ def reconstruct_image(images, featH, featW, input_size, aspect_ratio):
 
 if __name__ == '__main__':
     width = 0.5
-    path = 'I:/SCHOOL/opencv/Cycle-IR-master/RetargetMeAll/0.5'
-    # all_files_path = []
-    # for root, dirs, files in os.walk(path, topdown=False):
-    #     if len(files) > 0:
-    #         each_folder_files = [os.path.join(root,files[0])]
-    #         all_files_path.extend(each_folder_files)
-    # for path2 in all_files_path:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(BASE_DIR, "RetargetMeAll", "0.75")  # 将需要转换的图片放在根目录下的RetargetMeAll文件夹下的子文件夹
+    # 子文件夹是根据不同的缩放倍率建立不同的文件夹
+    # 遍历整个子文件夹
     for filename in os.listdir(path):
         img = io.imread(path + '/' + filename)
         print(filename)
-        # img = imread('./RetargetMeAll/image.png')
         img = np.stack((img, img, img, img, img, img))
         B, H, W, C = img.shape
         print(H / grid_size)
@@ -131,8 +123,9 @@ if __name__ == '__main__':
 
             x = np.array(x)
             print(x.shape)
-            # imshow(x[0, ...])
-            # plt.imshow(x[0, ...].astype(np.uint8))
-            img = Image.fromarray(x[0, ...].astype(np.uint8))
-            img.save(filename + "_" + str(width) + ".png")
+            # 显示结果
+            plt.imshow(x[0, ...].astype(np.uint8))
+            # 保存结果
+            # img = Image.fromarray(x[0, ...].astype(np.uint8))
+            # img.save(filename + "_" + str(width) + ".png")
             plt.show()
